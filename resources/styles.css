@@ -1,0 +1,273 @@
+@import "tailwindcss";
+@import "@openai/apps-sdk-ui/css";
+
+/* Configure Tailwind v4 to scan for classes */
+@source "../node_modules/@openai/apps-sdk-ui";
+@source "./**/*.{ts,tsx,js,jsx,html}";
+
+@theme {
+  --color-scheme: light dark;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Base */
+body {
+  margin: 0;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  @apply text-default;
+}
+p { @apply text-secondary; }
+a { @apply text-info; }
+
+/* ── Knowledge Graph Widget ─────────────────────────────────────────────── */
+
+.kg-root {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0d1117;
+  min-height: 520px;
+  font-family: inherit;
+}
+
+/* Toolbar */
+.kg-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.kg-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.kg-tab:hover {
+  color: rgba(255,255,255,0.8);
+  background: rgba(255,255,255,0.06);
+}
+.kg-tab.active {
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  border-color: rgba(255,255,255,0.12);
+}
+
+.kg-search {
+  flex: 1;
+  min-width: 120px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.kg-search::placeholder { color: rgba(255,255,255,0.3); }
+.kg-search:focus { border-color: rgba(255,255,255,0.25); }
+
+.kg-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0d1117;
+  background: #fff;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+.kg-add-btn:hover { opacity: 0.85; }
+
+/* Body split */
+.kg-body {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.kg-main {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 380px;
+}
+
+/* Sidebar panel */
+.kg-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  border-left: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  background: rgba(255,255,255,0.02);
+  animation: slideInRight 0.2s ease;
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+/* Graph SVG */
+.kg-graph-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Graph background dot grid */
+.kg-graph-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+/* Node glow animation */
+@keyframes nodeGlow {
+  0%, 100% { opacity: 0.15; }
+  50%       { opacity: 0.35; }
+}
+
+.kg-node-new circle.glow-ring {
+  animation: nodeGlow 1.5s ease-in-out 3;
+}
+
+/* Tag chip */
+.kg-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* Note cards in list view */
+.kg-note-card {
+  position: relative;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.kg-note-card:hover {
+  border-color: rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.07);
+  transform: translateY(-1px);
+}
+.kg-note-card.selected {
+  border-color: rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.08);
+}
+
+/* Form inputs inside widget */
+.kg-input {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+  resize: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+.kg-input::placeholder { color: rgba(255,255,255,0.3); }
+.kg-input:focus { border-color: rgba(255,255,255,0.3); }
+
+/* Connection pill */
+.kg-connection-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.kg-connection-pill:hover {
+  background: rgba(255,255,255,0.09);
+}
+
+/* Zoom controls */
+.kg-zoom-controls {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.kg-zoom-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s;
+  line-height: 1;
+}
+.kg-zoom-btn:hover { background: rgba(255,255,255,0.18); }
+
+/* Empty state */
+.kg-empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: rgba(255,255,255,0.35);
+  pointer-events: none;
+  gap: 8px;
+}

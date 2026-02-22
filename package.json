@@ -1,8 +1,8 @@
 {
-  "name": "trial",
+  "name": "cortex",
   "type": "module",
   "version": "1.0.0",
-  "description": "MCP server: trial",
+  "description": "MCP server: cortex",
   "author": "",
   "license": "MIT",
   "keywords": [
